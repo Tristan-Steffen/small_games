@@ -1,16 +1,32 @@
+//let array = []
 let array = [
-    [0, 0, 0, 0],
-    [0, 0, 0, 4],
-    [0, 0, 0, 0],
-    [0, 0, 0, 2]
+    [0, 8, 8, 4],
+    [0, 0, 8, 4],
+    [0, 2, 4, 2],
+    [0, 2, 0, 2]
 ]
+
+let colors = {
+    0: [255, 255, 255],
+    2: [238, 228, 218],
+    4: [237, 224, 200],
+    8: [242, 177, 121],
+    16: [245, 149, 99],
+    32: [246, 124, 96],
+    64: [246, 94, 59],
+    128: [237, 207, 115],
+    256: [237, 204, 98],
+    512: [237, 200, 80],
+    1024: [237, 197, 63],
+    2048: [237, 194, 45]
+}
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    createArray()
-    spawnRecources()
-    let row1 = [8, 8, 2, 8]
-    checkRow(row1)
+    //createArray()
+
+    //spawnRecources()
+
 }
 
 function createArray() {
@@ -22,14 +38,11 @@ function createArray() {
         }
         array.push(temp)
     }
-    console.log(array)
 }
-
 
 function draw() {
     background(201);
     drawGrid()
-    frameRate(1)
     noLoop()
 }
 
@@ -43,13 +56,15 @@ function drawGrid() {
             let y = baseY + cellSize * j
             distance = textWidth(array[i][j])
 
-            fill(255, 255, 255)
+            value = array[j][i]
+
+            fill(colors[value])
             square(x, y, cellSize)
 
             fill(0, 0, 0)
             textSize(36);
             textStyle(BOLD);
-            text(array[i][j], x - (distance / 2) + (cellSize / 2), y + cellSize / 2 + 10);
+            text(value, x - (distance / 2) + (cellSize / 2), y + cellSize / 2 + 10);
         }
     }
 }
@@ -65,7 +80,7 @@ function spawnRecources() {
         }
     }
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < Math.min(2, emptyCells.length); i++) {
         chosenCell = emptyCells.splice(Math.floor(Math.random() * emptyCells.length), 1)
         if (Math.random() < 0.5) {
             array[chosenCell[0][0]][chosenCell[0][1]] = 2
@@ -75,20 +90,25 @@ function spawnRecources() {
     }
 }
 
-
-function moveRecources(row) {
-    newRow = [row[0]]
-    for (let j = 1; j < 2; j++) {
-        if (row[j] == newRow[j - 1]) {
-            newRow[j - 1] = newRow[j - 1] * 2
-            newRow.push(0)
-        } else if (row[j - 1] == 0 || row[j] == 0) {
-            newRow.push(0)
-        } else if (row[j - 1] != 0 || row[j - 1] != row[j]) {
-            newRow.push(row[j])
+function rotateArray() {
+    finallArray = []
+    for (let i = 0; i < array.length; i++) {
+        temp = []
+        for (let j = 0; j < array[i].length; j++) {
+            temp.push(array[array[i].length - j - 1][i])
         }
+        finallArray.push(temp)
     }
-    console.log(newRow)
+    array = finallArray
+}
+
+function moveRecourcesLeft() {
+    console.log(array)
+    newArray = []
+    for (let i = 0; i < array.length; i++) {
+        newArray.push(checkRow(array[i]))
+    }
+    array = newArray
 }
 
 function checkTwoCells(a, b) {
@@ -104,7 +124,6 @@ function checkTwoCells(a, b) {
     } else {
         newCells.push(b)
     }
-    console.log(newCells)
     return newCells
 }
 
@@ -131,16 +150,32 @@ function checkRow(row) {
 
 function keyPressed() {
     if (keyCode === LEFT_ARROW) {
-        newArray = []
-        for (let i = 0; i < 4; i++) {
-            newRow = [array[i][0]]
-
-        }
+        moveRecourcesLeft()
+        spawnRecources()
+        drawGrid()
     } else if (keyCode === RIGHT_ARROW) {
-        console.log("right")
+        rotateArray()
+        rotateArray()
+        moveRecourcesLeft()
+        spawnRecources()
+        rotateArray()
+        rotateArray()
+        drawGrid()
     } else if (keyCode === UP_ARROW) {
-        console.log("up")
+        rotateArray()
+        rotateArray()
+        rotateArray()
+        moveRecourcesLeft()
+        spawnRecources()
+        rotateArray()
+        drawGrid()
     } else if (keyCode === DOWN_ARROW) {
-        console.log("down")
+        rotateArray()
+        moveRecourcesLeft()
+        spawnRecources()
+        rotateArray()
+        rotateArray()
+        rotateArray()
+        drawGrid()
     }
 }
