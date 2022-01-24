@@ -1,10 +1,4 @@
-//let array = []
-let array = [
-    [0, 8, 8, 4],
-    [0, 0, 8, 4],
-    [0, 2, 4, 2],
-    [0, 2, 0, 2]
-]
+let array = []
 
 let colors = {
     0: [255, 255, 255],
@@ -23,9 +17,8 @@ let colors = {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    //createArray()
-
-    //spawnRecources()
+    createArray()
+    spawnRecources()
 
 }
 
@@ -64,6 +57,10 @@ function drawGrid() {
             fill(0, 0, 0)
             textSize(36);
             textStyle(BOLD);
+            
+            if (value == 0) {
+                value = ""
+            }
             text(value, x - (distance / 2) + (cellSize / 2), y + cellSize / 2 + 10);
         }
     }
